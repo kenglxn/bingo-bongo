@@ -14,7 +14,7 @@ function reducer(state, action) {
     case ACTIONS.set:
       return action.payload || [];
     case ACTIONS.create:
-      return [...state, ...action.payload];
+      return [...state, action.payload];
     case ACTIONS.update:
       return state.map((e) =>
         e.id === action.payload.id ? action.payload : e
@@ -39,7 +39,11 @@ const StorageProvider = ({ children }) => {
           dispatch({ type: ACTIONS.set, payload });
         },
         create: (item) => {
-          const payload = { id: state.length + 1, ...item };
+          const payload = {
+            id: state.length + 1,
+            created_at: Date.now(),
+            ...item,
+          };
           dispatch({ type: ACTIONS.create, payload });
           return payload;
         },
