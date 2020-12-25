@@ -1,7 +1,9 @@
 import { useParams } from "react-router-dom";
+import useGamesDb from "hooks/useGamesDb";
 
 function Game() {
-  let { id } = useParams();
+  let { id: idS } = useParams();
+  let id = parseInt(idS);
   return id ? <ViewGame id={id} /> : <NewGame />;
 }
 
@@ -10,7 +12,10 @@ function NewGame() {
 }
 
 function ViewGame({ id }) {
-  return <p>game: {id}</p>;
+  let { find } = useGamesDb();
+  let game = find(id);
+
+  return <p>game: {game.name}</p>;
 }
 
 export default Game;
