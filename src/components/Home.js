@@ -13,7 +13,7 @@ function Home() {
   const { state: games } = useStorage();
 
   return (
-    <>
+    <Card>
       <Tooltip title="opprett nytt spill">
         <Button
           onClick={() => history.push("/game")}
@@ -37,7 +37,7 @@ function Home() {
       />
 
       <TestData />
-    </>
+    </Card>
   );
 }
 
