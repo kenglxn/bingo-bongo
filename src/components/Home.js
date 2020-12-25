@@ -1,15 +1,16 @@
 import { Link, useHistory } from "react-router-dom";
-import { Button, Tooltip, List } from "antd";
-import useGamesDb from "hooks/useGamesDb";
+import { Button, Card, Tooltip, List } from "antd";
+import { useStorage } from "context/Storage";
 import {
   FileAddOutlined,
   CheckCircleOutlined,
   SnippetsOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 
 function Home() {
   let history = useHistory();
-  let { games } = useGamesDb([]);
+  const { state: games } = useStorage();
 
   return (
     <>
@@ -35,13 +36,13 @@ function Home() {
         )}
       />
 
-      <LoadTestData />
+      <TestData />
     </>
   );
 }
 
-function LoadTestData() {
-  const { setGames } = useGamesDb([]);
+function TestData() {
+  const { set } = useStorage();
   const testData = [
     {
       id: 1,
@@ -50,11 +51,14 @@ function LoadTestData() {
     },
   ];
   return (
-    <Button
-      onClick={() => setGames(testData)}
-      type="primary"
-      icon={<SnippetsOutlined />}
-    />
+    <Card>
+      <Button
+        onClick={() => set(testData)}
+        type="primary"
+        icon={<SnippetsOutlined />}
+      />
+      <Button onClick={() => set()} type="default" icon={<DeleteOutlined />} />
+    </Card>
   );
 }
 

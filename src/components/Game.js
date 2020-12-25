@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import useGamesDb from "hooks/useGamesDb";
+import { useStorage } from "context/Storage";
 
 function Game() {
   let { id: idS } = useParams();
@@ -12,7 +12,7 @@ function NewGame() {
 }
 
 function ViewGame({ id }) {
-  let { find } = useGamesDb();
+  let { find } = useStorage();
   let game = find(id);
 
   return <p>game: {game.name}</p>;
