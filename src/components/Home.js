@@ -7,6 +7,7 @@ import {
   SnippetsOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
+import { GameModel } from "models/Game";
 
 function Home() {
   let history = useHistory();
@@ -16,6 +17,7 @@ function Home() {
     <Card>
       <Tooltip title="opprett nytt spill">
         <Button
+          data-testid="opprett nytt spill"
           onClick={() => history.push("/game")}
           type="primary"
           icon={<FileAddOutlined />}
@@ -42,22 +44,28 @@ function Home() {
 }
 
 function TestData() {
-  const { set } = useStorage();
-  const testData = [
-    {
-      id: 1,
-      name: "julebingo",
-      created_at: Date.now(),
-    },
-  ];
+  const { set, create } = useStorage();
+  const testData = [new GameModel("julebingo", 1, 10)];
+  console.log(testData);
   return (
-    <Card>
-      <Button
-        onClick={() => set(testData)}
-        type="primary"
-        icon={<SnippetsOutlined />}
-      />
-      <Button onClick={() => set()} type="default" icon={<DeleteOutlined />} />
+    <Card title="Testdata fn()">
+      <Tooltip title="generer testdata">
+        <Button
+          onClick={() => {
+            set();
+            testData.forEach((d) => create(d.toJSON()));
+          }}
+          type="primary"
+          icon={<SnippetsOutlined />}
+        />
+      </Tooltip>
+      <Tooltip title="Slett alt">
+        <Button
+          onClick={() => set()}
+          type="default"
+          icon={<DeleteOutlined />}
+        />
+      </Tooltip>
     </Card>
   );
 }
