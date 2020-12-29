@@ -32,7 +32,9 @@ function Home() {
             <List.Item.Meta
               avatar={<CheckCircleOutlined />}
               title={<Link to={`/game/${game.id}`}>{game.name}</Link>}
-              description={`${game.name} @ ${game.created_at}`}
+              description={`${game.name}: ${new Date(
+                game.created_at
+              ).toLocaleString()}`}
             />
           </List.Item>
         )}

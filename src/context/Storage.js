@@ -53,9 +53,6 @@ const StorageProvider = ({ children }) => {
           return payload;
         },
         find: (needle) => {
-          console.log(
-            `find by id:${needle}. games:${JSON.stringify(state, null, 2)}`
-          );
           return state.find(({ id }) => id === needle);
         },
       }}

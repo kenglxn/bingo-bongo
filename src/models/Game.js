@@ -1,4 +1,4 @@
-import { randomNumberRangeArray } from "GameUtils";
+import { randomNumberRangeArray, shuffle } from "GameUtils";
 
 export class TombolaModel {
   /**
@@ -109,6 +109,29 @@ export class GameModel {
     this.tombola_pool = randomNumberRangeArray(max_ticket, min_ticket);
     this.tombolas = [];
     this.created_at = Date.now();
+  }
+
+  shuffleTombola() {
+    this.tombola_pool = shuffle(this.tombola_pool);
+  }
+
+  shuffleBingo() {
+    this.bingo_pool = shuffle(this.bingo_pool);
+  }
+
+  drawBingoNumber() {
+    this.shuffleBingo();
+    const number = this.bingo_pool.pop();
+    number && this.bingo_numbers.push(number);
+
+    return number;
+  }
+
+  drawTombolaNumber() {
+    this.shuffleTombola();
+    const number = this.tombola_pool.pop();
+    number && this.tombola_numbers.push(number);
+    return number;
   }
 
   // create bingo(1|2|3)
