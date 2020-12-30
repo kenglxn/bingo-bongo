@@ -48,7 +48,6 @@ function Home() {
 function TestData() {
   const { set, create } = useStorage();
   const testData = [new GameModel("julebingo", 1, 10)];
-  console.log(testData);
   return (
     <Card title="Testdata fn()">
       <Tooltip title="generer testdata">

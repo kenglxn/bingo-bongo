@@ -11,20 +11,6 @@ export class TombolaModel {
     this.created_at = Date.now();
   }
 
-  /**
-   * @param {Number} number
-   */
-  set number(number) {
-    this.number = number;
-  }
-
-  /**
-   * @param {String} winner
-   */
-  set winner(winner) {
-    this.winner = winner;
-  }
-
   toJSON() {
     return {
       number: this.number,
@@ -47,32 +33,24 @@ export class BingoModel {
    * @param {String} winner
    * @param {1|2|3} type
    */
-  constructor(number, winner, type) {
+  constructor(number, winner, type = 1) {
     this.number = number;
     this.winner = winner;
     this.type = type;
     this.created_at = Date.now();
   }
 
-  /**
-   * @param {Number} number
-   */
-  set number(number) {
-    this.number = number;
-  }
-
-  /**
-   * @param {String} winner
-   */
-  set winner(winner) {
-    this.winner = winner;
-  }
-
-  /**
-   * @param {1|2|3} type
-   */
-  set type(type) {
-    this.type = type;
+  get localeType() {
+    switch (this.type) {
+      case 1:
+        return "En rad";
+      case 2:
+        return "To rader";
+      case 3:
+        return "Fullt hus";
+      default:
+        return null;
+    }
   }
 
   toJSON() {
@@ -80,7 +58,7 @@ export class BingoModel {
       number: this.number,
       winner: this.winner,
       type: this.type,
-      created_at: this.Date.now(),
+      created_at: Date.now(),
     };
   }
 
@@ -111,6 +89,18 @@ export class GameModel {
     this.created_at = Date.now();
   }
 
+  reset() {
+    this.bingo_numbers = [];
+    this.bingo_pool = randomNumberRangeArray(90);
+    this.bingos = [];
+    this.tombola_numbers = [];
+    this.tombola_pool = randomNumberRangeArray(
+      this.max_ticket,
+      this.min_ticket
+    );
+    this.tombolas = [];
+  }
+
   shuffleTombola() {
     this.tombola_pool = shuffle(this.tombola_pool);
   }
@@ -120,25 +110,57 @@ export class GameModel {
   }
 
   drawBingoNumber() {
-    this.shuffleBingo();
     const number = this.bingo_pool.pop();
-    number && this.bingo_numbers.push(number);
-
+    if (number) {
+      this.bingo_numbers.push(number);
+      this.shuffleBingo();
+    }
     return number;
   }
 
   drawTombolaNumber() {
-    this.shuffleTombola();
     const number = this.tombola_pool.pop();
-    number && this.tombola_numbers.push(number);
+    if (number) {
+      this.tombola_numbers.push(number);
+      this.shuffleTombola();
+    }
     return number;
   }
 
-  // create bingo(1|2|3)
-  // connect bingo instance with number, support updates
+  getBingo(number) {
+    return this.bingos.find((b) => b.number === number);
+  }
 
-  // create tombola. tombolas must exclude previous tombola winners
-  // perhaps via tombola.game.tombolaNumbers()
+  newBingo(number) {
+    if (this.bingos.length < 3) {
+      return new BingoModel(number, null, this.bingos.length + 1);
+    }
+  }
+
+  addBingo(bingo) {
+    const index = this.bingos.findIndex((b) => b.number === bingo.number);
+    this.bingos[index !== -1 ? index : this.bingos.length] = bingo;
+  }
+
+  removeBingo(bingo) {
+    this.bingos = this.bingos.filter((b) => b.number !== bingo.number);
+  }
+
+  lastBingo() {
+    return this.bingos.slice(-1)[0];
+  }
+
+  isLastBingo(bingo) {
+    return (this.lastBingo() || {}).number === bingo.number;
+  }
+
+  bingoAfter(number) {
+    const lastBingo = this.lastBingo();
+    const lastBingoPos =
+      lastBingo && this.bingo_numbers.indexOf(lastBingo.number);
+    const numberPos = this.bingo_numbers.indexOf(number);
+    return lastBingoPos > numberPos;
+  }
 
   toJSON() {
     return {
