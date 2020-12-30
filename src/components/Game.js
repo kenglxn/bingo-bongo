@@ -21,6 +21,7 @@ import {
   SaveOutlined,
   DeleteOutlined,
   CloseSquareOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { useStorage } from "context/Storage";
 import { GameModel } from "models/Game";
@@ -274,10 +275,10 @@ function BingoNumbers({ game, onEdit, onSelect, activeNum }) {
     const newBingo = game.newBingo(num);
 
     return bingo ? (
-      <Tooltip key={num} title="Trykk for å redigere Bingo!">
+      <Tooltip key={num} title={!bingoAfter && "Trykk for å redigere Bingo!"}>
         <Badge
           style={{ backgroundColor: "#eee", color: "black" }}
-          count={bingo.type + "x"}
+          count={bingo.type !== 3 ? bingo.type + "x" : <HomeOutlined />}
           offset={[-10, 2]}
         >
           <Button
