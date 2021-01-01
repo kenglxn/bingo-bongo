@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import {
   Row,
@@ -14,6 +14,7 @@ import {
   Drawer,
   List,
   Space,
+  Carousel,
 } from "antd";
 import {
   PlusOutlined,
@@ -25,6 +26,166 @@ import {
 } from "@ant-design/icons";
 import { useStorage } from "context/Storage";
 import { GameModel } from "models/Game";
+import "components/Game.css"; // keyframes and scoping are wonky, just use regular css for keyframes
+
+const ballColors = [
+  "AliceBlue",
+  "AntiqueWhite",
+  "Aqua",
+  "Aquamarine",
+  "Azure",
+  "Beige",
+  "Bisque",
+  "Black",
+  "BlanchedAlmond",
+  "Blue",
+  "BlueViolet",
+  "Brown",
+  "BurlyWood",
+  "CadetBlue",
+  "Chartreuse",
+  "Chocolate",
+  "Coral",
+  "CornflowerBlue",
+  "Cornsilk",
+  "Crimson",
+  "Cyan",
+  "DarkBlue",
+  "DarkCyan",
+  "DarkGoldenrod",
+  "DarkGray",
+  "DarkGreen",
+  "DarkGrey",
+  "DarkKhaki",
+  "DarkMagenta",
+  "DarkOliveGreen",
+  "DarkOrange",
+  "DarkOrchid",
+  "DarkRed",
+  "DarkSalmon",
+  "DarkSeaGreen",
+  "DarkSlateBlue",
+  "DarkSlateGray",
+  "DarkSlateGrey",
+  "DarkTurquoise",
+  "DarkViolet",
+  "DeepPink",
+  "DeepSkyBlue",
+  "DimGray",
+  "DodgerBlue",
+  "FireBrick",
+  "FloralWhite",
+  "ForestGreen",
+  "Fuchsia",
+  "Gainsboro",
+  "GhostWhite",
+  "Gold",
+  "Goldenrod",
+  "Gray",
+  "Green",
+  "GreenYellow",
+  "Grey",
+  "Honeydew",
+  "HotPink",
+  "IndianRed",
+  "Indigo",
+  "Ivory",
+  "Khaki",
+  "Lavender",
+  "LavenderBlush",
+  "LawnGreen",
+  "LemonChiffon",
+  "LightBlue",
+  "LightCoral",
+  "LightCyan",
+  "LightGoldenrodYellow",
+  "LightGray",
+  "LightGreen",
+  "LightGrey",
+  "LightPink",
+  "LightSalmon",
+  "LightSeaGreen",
+  "LightSkyBlue",
+  "LightSlateGray",
+  "LightSlateGrey",
+  "LightSteelBlue",
+  "LightYellow",
+  "Lime",
+  "LimeGreen",
+  "Linen",
+  "Magenta",
+  "Maroon",
+  "MediumAquamarine",
+  "MediumBlue",
+  "MediumOrchid",
+  "MediumPurple",
+  "MediumSeaGreen",
+  "MediumSlateBlue",
+  "MediumSpringGreen",
+  "MediumTurquoise",
+  "MediumVioletRed",
+  "MidnightBlue",
+  "MintCream",
+  "MistyRose",
+  "Moccasin",
+  "NavajoWhite",
+  "Navy",
+  "OldLace",
+  "Olive",
+  "OliveDrab",
+  "Orange",
+  "OrangeRed",
+  "Orchid",
+  "PaleGoldenrod",
+  "PaleGreen",
+  "PaleTurquoise",
+  "PaleVioletRed",
+  "PapayaWhip",
+  "PeachPuff",
+  "Peru",
+  "Pink",
+  "Plum",
+  "PowderBlue",
+  "Purple",
+  "Rebeccapurple",
+  "Red",
+  "RosyBrown",
+  "RoyalBlue",
+  "SaddleBrown",
+  "Salmon",
+  "SandyBrown",
+  "SeaGreen",
+  "Seashell",
+  "Sienna",
+  "Silver",
+  "SkyBlue",
+  "SlateBlue",
+  "SlateGray",
+  "SlateGrey",
+  "Snow",
+  "SpringGreen",
+  "SteelBlue",
+  "Tan",
+  "Teal",
+  "Thistle",
+  "Tomato",
+  "Turquoise",
+  "Violet",
+  "Wheat",
+  "White",
+  "WhiteSmoke",
+  "Yellow",
+  "YellowGreen",
+  "red",
+  "blue",
+  "green",
+  "black",
+  "purple",
+];
+
+const ballColor = (num) => {
+  return ballColors[num % ballColors.length];
+};
 
 const formLayout = {
   labelCol: { span: 4 },
@@ -145,41 +306,43 @@ function ShowGame({ id }) {
       </Divider>
       <Row justify="center" gutter={[10, 25]}>
         <Col flex="0 1 50vw">
-          <Tooltip placement="bottomLeft" title="Trekk et bingotall">
-            <Button
-              disabled={game.bingos.length === 3}
-              size="large"
-              onClick={() => {
-                game.drawBingoNumber() && update(game);
-              }}
-              type="default"
-              shape="circle"
-              icon={<PlusOutlined />}
-            />
-          </Tooltip>
-          <Tooltip placement="bottomLeft" title="Tombola">
-            <Button
-              size="large"
-              onClick={() => {
-                setShowTombola(!showTombola);
-              }}
-              type="default"
-              shape="circle"
-              icon={<CompassOutlined />}
-            />
-          </Tooltip>
-          <Tooltip placement="bottomLeft" title="Lagre og lukk">
-            <Button
-              danger
-              size="large"
-              onClick={() => {
-                console.log("TODO: set finished and go home");
-              }}
-              type="default"
-              shape="circle"
-              icon={<SaveOutlined />}
-            />
-          </Tooltip>
+          <Space>
+            <Tooltip placement="bottomLeft" title="Trekk et bingotall">
+              <Button
+                disabled={game.bingos.length === 3}
+                size="large"
+                onClick={() => {
+                  game.drawBingoNumber() && update(game);
+                }}
+                type="default"
+                shape="circle"
+                icon={<PlusOutlined />}
+              />
+            </Tooltip>
+            <Tooltip placement="bottomLeft" title="Tombola">
+              <Button
+                size="large"
+                onClick={() => {
+                  setShowTombola(!showTombola);
+                }}
+                type="default"
+                shape="circle"
+                icon={<CompassOutlined />}
+              />
+            </Tooltip>
+            <Tooltip placement="bottomLeft" title="Lagre og lukk">
+              <Button
+                danger
+                size="large"
+                onClick={() => {
+                  console.log("TODO: set finished and go home");
+                }}
+                type="default"
+                shape="circle"
+                icon={<SaveOutlined />}
+              />
+            </Tooltip>
+          </Space>
         </Col>
       </Row>
       <Row justify="center" gutter={[10, 25]}>
@@ -243,7 +406,7 @@ function ShowGame({ id }) {
       <Drawer
         title="Tombola!"
         placement="top"
-        height="50vh"
+        height="75vh"
         closable={false}
         onClose={() => setShowTombola(false)}
         visible={showTombola}
@@ -401,12 +564,138 @@ function BingoList({ game }) {
 }
 
 function Tombola({ game, onClose }) {
+  const contentStyle = {
+    height: "160px",
+    lineHeight: "160px",
+    textAlign: "center",
+    background: "#364d79",
+  };
+  const boxStyle = {
+    height: "140px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  };
+  const ballStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "75px",
+    width: "75px",
+    color: "black",
+    fontSize: "22px",
+    fontWeight: "bold",
+    borderRadius: "50%",
+    backgroundColor: "red",
+    border: "thin solid #ddd",
+  };
+  const carouselRef = useRef(null);
+  const [running, setRunning] = useState(false);
+  const [number, setNumber] = useState();
+  useEffect(() => {
+    let ticks = 0;
+    let pid = setInterval(() => {
+      console.log({ ticks });
+      if (!running) {
+        clearInterval(pid);
+      }
+      if (ticks > 50) {
+        setRunning(false);
+        setNumber(game.drawTombolaNumber());
+      } else {
+        running && carouselRef.current.next();
+        ticks += 1;
+      }
+    }, 200);
+
+    return () => {
+      ticks = 0;
+      clearInterval(pid);
+    };
+  }, [running, game]);
+
   return (
     <>
-      <p>TODO: tombola</p>
-      <Button onClick={onClose} type="primary">
-        Lukk
-      </Button>
+      <Row justify="center" gutter={[10, 25]}>
+        <Col span={6} />
+        <Col span={12}>
+          {number ? (
+            <div>
+              <div style={contentStyle}>
+                <div style={boxStyle} className="box">
+                  <div
+                    style={{
+                      ...ballStyle,
+                      backgroundColor: ballColor(number),
+                    }}
+                    className="tombolaStop"
+                  >
+                    {number}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Carousel ref={carouselRef}>
+              {game.tombola_pool.slice(0, 33).map((num) => (
+                <div>
+                  <div style={contentStyle}>
+                    <div style={boxStyle} className="box">
+                      <div
+                        style={{
+                          ...ballStyle,
+                          backgroundColor: ballColor(num),
+                        }}
+                        className={running ? "tombolaSpin" : ""}
+                      >
+                        {num}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Carousel>
+          )}
+        </Col>
+        <Col span={6} />
+      </Row>
+      <Row justify="center" gutter={[10, 25]}>
+        <Col span={6} />
+        <Col span={12}>
+          {number ? (
+            <p>todo: tombola form</p>
+          ) : (
+            <>
+              {running && (
+                <Button
+                  danger
+                  onClick={() => {
+                    setRunning(false);
+                    setNumber(game.drawTombolaNumber());
+                  }}
+                  type="default"
+                >
+                  Stopp
+                </Button>
+              )}
+              <Button
+                loading={running}
+                onClick={() => {
+                  setNumber();
+                  setRunning(true);
+                }}
+                type="primary"
+              >
+                Kjør
+              </Button>
+              <Button disabled={running} onClick={onClose} type="default">
+                Lukk
+              </Button>
+            </>
+          )}
+        </Col>
+        <Col span={6} />
+      </Row>
     </>
   );
 }
