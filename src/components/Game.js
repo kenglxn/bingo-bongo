@@ -36,7 +36,6 @@ const ballColors = [
   "Azure",
   "Beige",
   "Bisque",
-  "Black",
   "BlanchedAlmond",
   "Blue",
   "BlueViolet",
@@ -50,7 +49,6 @@ const ballColors = [
   "Cornsilk",
   "Crimson",
   "Cyan",
-  "DarkBlue",
   "DarkCyan",
   "DarkGoldenrod",
   "DarkGray",
@@ -176,11 +174,6 @@ const ballColors = [
   "WhiteSmoke",
   "Yellow",
   "YellowGreen",
-  "red",
-  "blue",
-  "green",
-  "black",
-  "purple",
 ];
 
 const ballColor = (num) => {
@@ -583,6 +576,8 @@ function Tombola({ game, onClose }) {
     height: "75px",
     width: "75px",
     color: "black",
+    textShadow:
+      "1px 1px 1px #FFF, -1px -1px 1px #FFF, -1px 1px 1px #FFF, 1px -1px 1px #FFF",
     fontSize: "22px",
     fontWeight: "bold",
     borderRadius: "50%",
