@@ -23,6 +23,10 @@ function Home() {
       <List
         itemLayout="horizontal"
         dataSource={games}
+        pagination={{
+          pageSize: 10,
+          hideOnSinglePage: true,
+        }}
         renderItem={(game) => (
           <List.Item>
             <List.Item.Meta
