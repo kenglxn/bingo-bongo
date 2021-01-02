@@ -2,6 +2,7 @@
   "name": "bingo-bongo",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/bingo-bongo",
   "dependencies": {
     "@ant-design/icons": "^4.3.0",
     "@testing-library/jest-dom": "^5.11.6",
