@@ -7,7 +7,7 @@ import "App.css";
 function App() {
   return (
     <StorageProvider>
-      <Router>
+      <Router basename="/bingo-bongo">
         <Switch>
           <Route exact path="/">
             <Home />
