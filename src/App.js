@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { StorageProvider } from "context/Storage";
 import Home from "components/Home";
 import Game from "components/Game";
@@ -7,7 +7,7 @@ import "App.css";
 function App() {
   return (
     <StorageProvider>
-      <Router basename="/bingo-bongo">
+      <Router basename="/">
         <Switch>
           <Route exact path="/">
             <Home />
