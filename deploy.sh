@@ -1,6 +1,8 @@
 #!/bin/bash 
 
 # inspired by https://gist.github.com/nobuoka/d0f088df57d50e4cda1a
+# TODO: replace with GH Actions:
+#   https://cmichel.medium.com/how-to-deploy-a-create-react-app-with-github-actions-5e01f7a7b6b
 
 npm run build
 git add -f ./build

@@ -1,13 +1,7 @@
 import { Link, useHistory } from "react-router-dom";
 import { Button, Card, Tooltip, List } from "antd";
 import { useStorage } from "context/Storage";
-import {
-  FileAddOutlined,
-  CheckCircleOutlined,
-  SnippetsOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
-import { GameModel } from "models/Game";
+import { FileAddOutlined, CheckCircleOutlined } from "@ant-design/icons";
 
 function Home() {
   let history = useHistory();
@@ -21,7 +15,9 @@ function Home() {
           onClick={() => history.push("/game")}
           type="primary"
           icon={<FileAddOutlined />}
-        />
+        >
+          Lag spill
+        </Button>
       </Tooltip>
 
       <List
@@ -39,34 +35,6 @@ function Home() {
           </List.Item>
         )}
       />
-
-      <TestData />
-    </Card>
-  );
-}
-
-function TestData() {
-  const { set, create } = useStorage();
-  const testData = [new GameModel("julebingo", 1, 10)];
-  return (
-    <Card title="Testdata fn()">
-      <Tooltip title="generer testdata">
-        <Button
-          onClick={() => {
-            set();
-            testData.forEach((d) => create(d.toJSON()));
-          }}
-          type="primary"
-          icon={<SnippetsOutlined />}
-        />
-      </Tooltip>
-      <Tooltip title="Slett alt">
-        <Button
-          onClick={() => set()}
-          type="default"
-          icon={<DeleteOutlined />}
-        />
-      </Tooltip>
     </Card>
   );
 }

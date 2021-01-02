@@ -10,7 +10,6 @@ import {
   Badge,
   Tooltip,
   Divider,
-  Card,
   Drawer,
   List,
   Space,
@@ -202,8 +201,8 @@ function CreateGame() {
   const [max, setMax] = useState();
 
   return (
-    <Row>
-      <Col flex="50vh">
+    <Row justify="center" gutter={[10, 25]}>
+      <Col flex="0 1 50vw">
         <Form
           {...formLayout}
           name="game"
@@ -426,18 +425,6 @@ function ShowGame({ id }) {
           onClose={() => setShowTombola(false)}
         />
       </Drawer>
-      <Card title="Testdata fn()">
-        <Tooltip title="tøm spill">
-          <Button
-            onClick={() => {
-              game.reset();
-              update(game);
-            }}
-            type="primary"
-            icon={<DeleteOutlined />}
-          />
-        </Tooltip>
-      </Card>
     </>
   );
 }
