@@ -21,6 +21,7 @@ function Home() {
       </Tooltip>
 
       <List
+        locale={{ emptyText: <></> }}
         itemLayout="horizontal"
         dataSource={games}
         pagination={{
