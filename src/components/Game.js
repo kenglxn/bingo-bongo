@@ -276,8 +276,10 @@ function CreateGame() {
 }
 
 function ShowGame({ id }) {
+  let history = useHistory();
   let { find, update } = useStorage();
   let [showTombola, setShowTombola] = useState(false);
+  let [tombola, setTombola] = useState();
   let [selected, setSelected] = useState();
   let [editing, setEditing] = useState();
   let game = GameModel.from(find(id));
@@ -328,7 +330,7 @@ function ShowGame({ id }) {
                 danger
                 size="large"
                 onClick={() => {
-                  console.log("TODO: set finished and go home");
+                  history.push("/");
                 }}
                 type="default"
                 shape="circle"
@@ -396,17 +398,33 @@ function ShowGame({ id }) {
           <BingoList {...{ game, selected }} />
         </Col>
       </Row>
+      <Divider />
+      <Row justify="center" gutter={[10, 25]}>
+        <Col flex="0 1 50vw">
+          <TombolaList
+            game={game}
+            onClick={(tombola) => {
+              setShowTombola(true);
+              setTombola(tombola);
+            }}
+          />
+        </Col>
+      </Row>
       <Drawer
         title="Tombola!"
         placement="top"
-        height="75vh"
+        height="100vh"
         closable={false}
         onClose={() => setShowTombola(false)}
         visible={showTombola}
         getContainer={false}
         style={{ position: "absolute" }}
       >
-        <Tombola game={game} onClose={() => setShowTombola(false)} />
+        <Tombola
+          game={game}
+          tombola={tombola}
+          onClose={() => setShowTombola(false)}
+        />
       </Drawer>
       <Card title="Testdata fn()">
         <Tooltip title="tøm spill">
@@ -531,6 +549,7 @@ function BingoForm({ game, bingo, onSave, onClose, onDelete = () => {} }) {
     </Form>
   );
 }
+
 function BingoList({ game }) {
   return (
     <List
@@ -541,9 +560,15 @@ function BingoList({ game }) {
         <List.Item>
           <List.Item.Meta
             avatar={
-              <Button danger type="default" size="large" shape="circle">
-                {bingo.number}
-              </Button>
+              <Badge
+                style={{ backgroundColor: "#eee", color: "black" }}
+                count={bingo.type !== 3 ? bingo.type + "x" : <HomeOutlined />}
+                offset={[-10, 2]}
+              >
+                <Button danger type="default" size="large" shape="circle">
+                  {bingo.number}
+                </Button>
+              </Badge>
             }
             title={bingo.winner}
             description={`${bingo.localeType}: ${new Date(
@@ -556,7 +581,7 @@ function BingoList({ game }) {
   );
 }
 
-function Tombola({ game, onClose }) {
+function Tombola({ game, onClose, tombola }) {
   const contentStyle = {
     height: "160px",
     lineHeight: "160px",
@@ -569,24 +594,15 @@ function Tombola({ game, onClose }) {
     alignItems: "center",
     justifyContent: "center",
   };
-  const ballStyle = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "75px",
-    width: "75px",
-    color: "black",
-    textShadow:
-      "1px 1px 1px #FFF, -1px -1px 1px #FFF, -1px 1px 1px #FFF, 1px -1px 1px #FFF",
-    fontSize: "22px",
-    fontWeight: "bold",
-    borderRadius: "50%",
-    backgroundColor: "red",
-    border: "thin solid #ddd",
-  };
+  let { update } = useStorage();
   const carouselRef = useRef(null);
   const [running, setRunning] = useState(false);
   const [number, setNumber] = useState();
+  useEffect(() => {
+    if (tombola) {
+      setNumber(tombola.number);
+    }
+  }, [tombola]);
   useEffect(() => {
     let ticks = 0;
     let pid = setInterval(() => {
@@ -618,33 +634,20 @@ function Tombola({ game, onClose }) {
             <div>
               <div style={contentStyle}>
                 <div style={boxStyle} className="box">
-                  <div
-                    style={{
-                      ...ballStyle,
-                      backgroundColor: ballColor(number),
-                    }}
-                    className="tombolaStop"
-                  >
-                    {number}
-                  </div>
+                  <TombolaBall number={number} className="tombolaStop" />
                 </div>
               </div>
             </div>
           ) : (
             <Carousel ref={carouselRef}>
               {game.tombola_pool.slice(0, 33).map((num) => (
-                <div>
+                <div key={num}>
                   <div style={contentStyle}>
                     <div style={boxStyle} className="box">
-                      <div
-                        style={{
-                          ...ballStyle,
-                          backgroundColor: ballColor(num),
-                        }}
+                      <TombolaBall
+                        number={num}
                         className={running ? "tombolaSpin" : ""}
-                      >
-                        {num}
-                      </div>
+                      />
                     </div>
                   </div>
                 </div>
@@ -658,7 +661,18 @@ function Tombola({ game, onClose }) {
         <Col span={6} />
         <Col span={12}>
           {number ? (
-            <p>todo: tombola form</p>
+            <TombolaForm
+              game={game}
+              number={number}
+              onSave={(tombola) => {
+                game.addTombola(tombola);
+                update(game);
+                setNumber();
+              }}
+              onClose={() => {
+                setNumber();
+              }}
+            />
           ) : (
             <>
               {running && (
@@ -691,7 +705,130 @@ function Tombola({ game, onClose }) {
         </Col>
         <Col span={6} />
       </Row>
+      <Row justify="center" gutter={[10, 25]}>
+        <Col span={6} />
+        <Col span={12}>
+          <TombolaList
+            game={game}
+            reverse
+            onClick={({ number }) => setNumber(number)}
+          />
+        </Col>
+        <Col span={6} />
+      </Row>
     </>
+  );
+}
+
+function TombolaBall({ number, className, style }) {
+  const ballStyle = {
+    ...{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "75px",
+      width: "75px",
+      color: "black",
+      textShadow:
+        "1px 1px 1px #FFF, -1px -1px 1px #FFF, -1px 1px 1px #FFF, 1px -1px 1px #FFF",
+      fontSize: "22px",
+      fontWeight: "bold",
+      borderRadius: "50%",
+      backgroundColor: "red",
+      border: "thin solid #ddd",
+    },
+    ...style,
+  };
+  return (
+    <div
+      style={{
+        ...ballStyle,
+        backgroundColor: ballColor(number),
+      }}
+      className={className}
+    >
+      {number}
+    </div>
+  );
+}
+
+function TombolaForm({ game, number, onSave, onClose }) {
+  const tombola = game.getTombola(number) || game.newTombola(number);
+  return (
+    <Form
+      style={{ marginTop: "5vh", padding: "2vh" }}
+      initialValues={tombola.toJSON()}
+      {...formLayout}
+      name="tombola"
+      requiredMark={false}
+      onFinish={(values) => {
+        tombola.winner = values.winner;
+        onSave(tombola);
+      }}
+    >
+      <Form.Item label="Vinnertall">
+        <TombolaBall number={tombola.number} />
+      </Form.Item>
+      <Form.Item
+        label="Vinner"
+        name="winner"
+        initialValue={tombola.winner}
+        rules={[{ required: true, message: "Oppgi navn på vinner" }]}
+      >
+        <Input placeholder="navn på vinner" />
+      </Form.Item>
+      <Form.Item {...buttonLayout}>
+        <Space>
+          <Button type="primary" htmlType="submit" icon={<SaveOutlined />}>
+            Lagre
+          </Button>
+          <Button
+            onClick={onClose}
+            type="default"
+            icon={<CloseSquareOutlined />}
+          >
+            Lukk
+          </Button>
+        </Space>
+      </Form.Item>
+    </Form>
+  );
+}
+
+function TombolaList({ game, reverse, onClick }) {
+  return (
+    <List
+      locale={{ emptyText: <></> }}
+      itemLayout="horizontal"
+      dataSource={reverse ? [...game.tombolas].reverse() : game.tombolas}
+      pagination={{
+        pageSize: 3,
+        hideOnSinglePage: true,
+      }}
+      renderItem={(tombola) => (
+        <List.Item>
+          <List.Item.Meta
+            avatar={
+              <TombolaBall
+                number={tombola.number}
+                style={{
+                  height: "40px",
+                  width: "40px",
+                  fontSize: "14px",
+                  fontWeight: "normal",
+                  cursor: "pointer",
+                }}
+              />
+            }
+            onClick={() => {
+              onClick && onClick(tombola);
+            }}
+            title={tombola.winner}
+            description={new Date(tombola.created_at).toLocaleString()}
+          />
+        </List.Item>
+      )}
+    />
   );
 }
 

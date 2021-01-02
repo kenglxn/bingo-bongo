@@ -162,6 +162,21 @@ export class GameModel {
     return lastBingoPos > numberPos;
   }
 
+  getTombola(number) {
+    return this.tombolas.find((t) => t.number === number);
+  }
+
+  newTombola(number) {
+    return new TombolaModel(number, null);
+  }
+
+  addTombola(tombola) {
+    const index = this.tombolas.findIndex(
+      ({ number }) => number === tombola.number
+    );
+    this.tombolas[index !== -1 ? index : this.tombolas.length] = tombola;
+  }
+
   toJSON() {
     return {
       name: this.name,
