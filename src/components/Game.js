@@ -224,7 +224,10 @@ function CreateGame() {
             </Form.Item>
 
             <Form.Item label="Bonger">
-              <Tooltip title="Brukes til å trekke tall ved Tombola">
+              <Tooltip
+                placement="topLeft"
+                title="Brukes til å trekke tall ved Tombola"
+              >
                 <Input.Group compact>
                   <Form.Item
                     name="min"
