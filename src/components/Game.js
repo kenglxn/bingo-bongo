@@ -238,6 +238,7 @@ function CreateGame() {
                     ]}
                   >
                     <InputNumber
+                      type="number"
                       style={{ width: "100%" }}
                       placeholder="Første"
                       onChange={(v) => v && setMin(v)}
@@ -256,6 +257,7 @@ function CreateGame() {
                     ]}
                   >
                     <InputNumber
+                      type="number"
                       style={{ width: "100%" }}
                       placeholder="Siste"
                       onChange={(v) => v && setMax(v)}
