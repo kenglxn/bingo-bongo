@@ -181,11 +181,11 @@ const ballColor = (num) => {
 
 const formLayout = {
   labelCol: { span: 4 },
-  wrapperCol: { span: 18 },
+  wrapperCol: { span: 20 },
 };
 
 const buttonLayout = {
-  wrapperCol: { span: 22, offset: 0 },
+  wrapperCol: { span: 24, offset: 0 },
 };
 
 function GameView() {
@@ -224,11 +224,8 @@ function CreateGame() {
             </Form.Item>
 
             <Form.Item label="Bonger">
-              <Tooltip
-                placement="topLeft"
-                title="Brukes til å trekke tall ved Tombola"
-              >
-                <Input.Group compact>
+              <Input.Group compact>
+                <Tooltip title="Brukes til å trekke tall ved Tombola">
                   <Form.Item
                     name="min"
                     rules={[
@@ -247,7 +244,9 @@ function CreateGame() {
                       onChange={(v) => v && setMin(v)}
                     />
                   </Form.Item>
+                </Tooltip>
 
+                <Tooltip title="Brukes til å trekke tall ved Tombola">
                   <Form.Item
                     name="max"
                     rules={[
@@ -266,8 +265,8 @@ function CreateGame() {
                       onChange={(v) => v && setMax(v)}
                     />
                   </Form.Item>
-                </Input.Group>
-              </Tooltip>
+                </Tooltip>
+              </Input.Group>
             </Form.Item>
 
             <Form.Item {...buttonLayout} style={{ textAlign: "right" }}>
