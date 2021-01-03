@@ -185,7 +185,7 @@ const formLayout = {
 };
 
 const buttonLayout = {
-  wrapperCol: { span: 18, offset: 4 },
+  wrapperCol: { span: 22, offset: 0 },
 };
 
 function GameView() {
@@ -201,76 +201,79 @@ function CreateGame() {
   const [max, setMax] = useState();
 
   return (
-    <Row justify="center" gutter={[10, 25]}>
-      <Col flex="0 1 50vw">
-        <Form
-          {...formLayout}
-          name="game"
-          initialValues={{ remember: true }}
-          requiredMark={false}
-          onFinish={({ name, min, max }) => {
-            const newGame = create(new GameModel(name, min, max).toJSON());
-            history.push("/game/" + newGame.id);
-          }}
-        >
-          <Form.Item
-            label="Navn"
-            name="name"
-            rules={[{ required: true, message: "Oppgi navn på spill" }]}
+    <>
+      <Divider>Lag Nytt Spill</Divider>
+      <Row justify="center">
+        <Col flex="0 1 80vw">
+          <Form
+            {...formLayout}
+            name="game"
+            initialValues={{ remember: true }}
+            requiredMark={false}
+            onFinish={({ name, min, max }) => {
+              const newGame = create(new GameModel(name, min, max).toJSON());
+              history.push("/game/" + newGame.id);
+            }}
           >
-            <Input placeholder="navn på dette spillet" />
-          </Form.Item>
+            <Form.Item
+              label="Navn"
+              name="name"
+              rules={[{ required: true, message: "Oppgi navn på spill" }]}
+            >
+              <Input placeholder="navn på dette spillet" />
+            </Form.Item>
 
-          <Form.Item label="Bonger">
-            <Tooltip title="Brukes til å trekke tall ved Tombola">
-              <Input.Group compact>
-                <Form.Item
-                  name="min"
-                  rules={[
-                    { required: true, message: "angi første bong" },
-                    {
-                      max,
-                      type: "number",
-                      message: "må være mindre siste bong",
-                    },
-                  ]}
-                >
-                  <InputNumber
-                    style={{ width: "100%" }}
-                    placeholder="Første"
-                    onChange={(v) => v && setMin(v)}
-                  />
-                </Form.Item>
+            <Form.Item label="Bonger">
+              <Tooltip title="Brukes til å trekke tall ved Tombola">
+                <Input.Group compact>
+                  <Form.Item
+                    name="min"
+                    rules={[
+                      { required: true, message: "angi første bong" },
+                      {
+                        max,
+                        type: "number",
+                        message: "må være mindre siste bong",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      style={{ width: "100%" }}
+                      placeholder="Første"
+                      onChange={(v) => v && setMin(v)}
+                    />
+                  </Form.Item>
 
-                <Form.Item
-                  name="max"
-                  rules={[
-                    { required: true, message: "angi siste bong" },
-                    {
-                      min,
-                      type: "number",
-                      message: "må være større enn første",
-                    },
-                  ]}
-                >
-                  <InputNumber
-                    style={{ width: "100%" }}
-                    placeholder="Siste"
-                    onChange={(v) => v && setMax(v)}
-                  />
-                </Form.Item>
-              </Input.Group>
-            </Tooltip>
-          </Form.Item>
+                  <Form.Item
+                    name="max"
+                    rules={[
+                      { required: true, message: "angi siste bong" },
+                      {
+                        min,
+                        type: "number",
+                        message: "må være større enn første",
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      style={{ width: "100%" }}
+                      placeholder="Siste"
+                      onChange={(v) => v && setMax(v)}
+                    />
+                  </Form.Item>
+                </Input.Group>
+              </Tooltip>
+            </Form.Item>
 
-          <Form.Item {...buttonLayout}>
-            <Button type="primary" htmlType="submit">
-              Start spill
-            </Button>
-          </Form.Item>
-        </Form>
-      </Col>
-    </Row>
+            <Form.Item {...buttonLayout} style={{ textAlign: "right" }}>
+              <Button type="primary" htmlType="submit">
+                Start spill
+              </Button>
+            </Form.Item>
+          </Form>
+        </Col>
+      </Row>
+    </>
   );
 }
 
@@ -298,8 +301,8 @@ function ShowGame({ id }) {
       <Divider>
         {game.name} @ {new Date(game.created_at).toLocaleString()}
       </Divider>
-      <Row justify="center" gutter={[10, 25]}>
-        <Col flex="0 1 50vw">
+      <Row justify="center" gutter={[10, 10]}>
+        <Col flex="0 1 80vw">
           <Space>
             <Tooltip placement="bottomLeft" title="Trekk et bingotall">
               <Button
@@ -339,16 +342,16 @@ function ShowGame({ id }) {
           </Space>
         </Col>
       </Row>
-      <Row justify="center" gutter={[10, 25]}>
-        <Col flex="0 1 50vw">
+      <Row justify="center" gutter={[10, 10]}>
+        <Col flex="0 1 80vw">
           {!editing && !selected && (
-            <div style={{ padding: "2vh" }}>
+            <div style={{ padding: "1vw" }}>
               <BingoNumbers {...{ game, onEdit, onSelect }} />
             </div>
           )}
 
           {selected && (
-            <div style={{ border: "1px solid #ddd", padding: "2vh" }}>
+            <div style={{ border: "1px solid #ddd", padding: "1vw" }}>
               <BingoNumbers
                 {...{ game, onEdit, onSelect, activeNum: selected }}
               />
@@ -367,7 +370,7 @@ function ShowGame({ id }) {
             </div>
           )}
           {editing && (
-            <div style={{ border: "1px solid #ddd", padding: "2vh" }}>
+            <div style={{ border: "1px solid #ddd", padding: "1vw" }}>
               <BingoNumbers
                 {...{ game, onEdit, onSelect, activeNum: editing }}
               />
@@ -392,14 +395,13 @@ function ShowGame({ id }) {
           )}
         </Col>
       </Row>
-      <Row justify="center" gutter={[10, 25]}>
-        <Col flex="0 1 50vw">
-          <BingoList {...{ game, selected }} />
+      <Row justify="center">
+        <Col flex="0 1 80vw">
+          <BingoList {...{ game, selected, onClick: onEdit }} />
         </Col>
       </Row>
-      <Divider />
-      <Row justify="center" gutter={[10, 25]}>
-        <Col flex="0 1 50vw">
+      <Row justify="center">
+        <Col flex="0 1 80vw">
           <TombolaList
             game={game}
             onClick={(tombola) => {
@@ -444,7 +446,7 @@ function BingoNumbers({ game, onEdit, onSelect, activeNum }) {
         >
           <Button
             danger
-            onClick={() => !bingoAfter && onEdit(bingo)}
+            onClick={() => onEdit(bingo)}
             type="default"
             size="large"
             shape="circle"
@@ -477,7 +479,7 @@ function BingoForm({ game, bingo, onSave, onClose, onDelete = () => {} }) {
   const disabled = exists && !game.isLastBingo(bingo);
   return (
     <Form
-      style={{ marginTop: "5vh", padding: "2vh" }}
+      style={{ padding: "1vw" }}
       initialValues={bingo.toJSON()}
       {...formLayout}
       name="bingo"
@@ -503,7 +505,7 @@ function BingoForm({ game, bingo, onSave, onClose, onDelete = () => {} }) {
       >
         <Input disabled={disabled} placeholder="navn på vinner" />
       </Form.Item>
-      <Form.Item {...buttonLayout}>
+      <Form.Item {...buttonLayout} style={{ textAlign: "right" }}>
         <Space>
           <Button
             disabled={disabled}
@@ -527,9 +529,7 @@ function BingoForm({ game, bingo, onSave, onClose, onDelete = () => {} }) {
               onClick={() => onDelete(bingo)}
               type="default"
               icon={<DeleteOutlined />}
-            >
-              Slett
-            </Button>
+            />
           )}
         </Space>
       </Form.Item>
@@ -537,7 +537,7 @@ function BingoForm({ game, bingo, onSave, onClose, onDelete = () => {} }) {
   );
 }
 
-function BingoList({ game }) {
+function BingoList({ game, onClick }) {
   return (
     <List
       locale={{ emptyText: <></> }}
@@ -552,7 +552,13 @@ function BingoList({ game }) {
                 count={bingo.type !== 3 ? bingo.type + "x" : <HomeOutlined />}
                 offset={[-10, 2]}
               >
-                <Button danger type="default" size="large" shape="circle">
+                <Button
+                  onClick={() => onClick(bingo)}
+                  danger
+                  type="default"
+                  size="large"
+                  shape="circle"
+                >
                   {bingo.number}
                 </Button>
               </Badge>
@@ -614,39 +620,8 @@ function Tombola({ game, onClose, tombola }) {
 
   return (
     <>
-      <Row justify="center" gutter={[10, 25]}>
-        <Col span={6} />
-        <Col span={12}>
-          {number ? (
-            <div>
-              <div style={contentStyle}>
-                <div style={boxStyle} className="box">
-                  <TombolaBall number={number} className="tombolaStop" />
-                </div>
-              </div>
-            </div>
-          ) : (
-            <Carousel ref={carouselRef}>
-              {game.tombola_pool.slice(0, 33).map((num) => (
-                <div key={num}>
-                  <div style={contentStyle}>
-                    <div style={boxStyle} className="box">
-                      <TombolaBall
-                        number={num}
-                        className={running ? "tombolaSpin" : ""}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </Carousel>
-          )}
-        </Col>
-        <Col span={6} />
-      </Row>
-      <Row justify="center" gutter={[10, 25]}>
-        <Col span={6} />
-        <Col span={12}>
+      <Row justify="center" gutter={[10, 10]}>
+        <Col flex="0 1 80vw">
           {number ? (
             <TombolaForm
               game={game}
@@ -690,18 +665,43 @@ function Tombola({ game, onClose, tombola }) {
             </>
           )}
         </Col>
-        <Col span={6} />
       </Row>
-      <Row justify="center" gutter={[10, 25]}>
-        <Col span={6} />
-        <Col span={12}>
+      <Row justify="center" gutter={[10, 10]}>
+        <Col flex="0 1 80vw">
+          {number ? (
+            <div>
+              <div style={contentStyle}>
+                <div style={boxStyle} className="box">
+                  <TombolaBall number={number} className="tombolaStop" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Carousel ref={carouselRef}>
+              {game.tombola_pool.slice(0, 33).map((num) => (
+                <div key={num}>
+                  <div style={contentStyle}>
+                    <div style={boxStyle} className="box">
+                      <TombolaBall
+                        number={num}
+                        className={running ? "tombolaSpin" : ""}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Carousel>
+          )}
+        </Col>
+      </Row>
+      <Row justify="center" gutter={[10, 10]}>
+        <Col flex="0 1 80vw">
           <TombolaList
             game={game}
             reverse
             onClick={({ number }) => setNumber(number)}
           />
         </Col>
-        <Col span={6} />
       </Row>
     </>
   );
@@ -743,7 +743,7 @@ function TombolaForm({ game, number, onSave, onClose }) {
   const tombola = game.getTombola(number) || game.newTombola(number);
   return (
     <Form
-      style={{ marginTop: "5vh", padding: "2vh" }}
+      style={{ padding: "1vw" }}
       initialValues={tombola.toJSON()}
       {...formLayout}
       name="tombola"
@@ -764,12 +764,13 @@ function TombolaForm({ game, number, onSave, onClose }) {
       >
         <Input placeholder="navn på vinner" />
       </Form.Item>
-      <Form.Item {...buttonLayout}>
+      <Form.Item {...buttonLayout} style={{ textAlign: "right" }}>
         <Space>
           <Button type="primary" htmlType="submit" icon={<SaveOutlined />}>
             Lagre
           </Button>
           <Button
+            disabled={!game.getTombola(number)}
             onClick={onClose}
             type="default"
             icon={<CloseSquareOutlined />}
@@ -789,7 +790,8 @@ function TombolaList({ game, reverse, onClick }) {
       itemLayout="horizontal"
       dataSource={reverse ? [...game.tombolas].reverse() : game.tombolas}
       pagination={{
-        pageSize: 3,
+        position: "top",
+        pageSize: 4,
         hideOnSinglePage: true,
       }}
       renderItem={(tombola) => (
